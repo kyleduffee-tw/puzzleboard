@@ -130,9 +130,11 @@ function normalisePuzzles(text) {
     .replace(/&#129513;/gi, '🧩')
     .replace(/&#x1F9E9;/gi, '🧩')
     // ── Collapse Teams @mention spans BEFORE stripping tags ──
-    // Teams renders "@Kyle Duffee" as separate <span itemtype=".../Mention"> tags
-    // joined by &nbsp;. We join them and prefix with @ so parsePasted detects them.
+    // Clipboard format: <span itemtype=".../Mention">Word</span>
+    // Power Automate format: <at id="0">Word</at>
+    // Both split names across multiple tags joined by &nbsp;
     .replace(/<span[^>]*itemtype=["']http:\/\/schema\.skype\.com\/Mention["'][^>]*>([^<]*)<\/span>/gi, '__MSTART__$1__MEND__')
+    .replace(/<at\b[^>]*>([^<]*)<\/at>/gi, '__MSTART__$1__MEND__')
     .replace(/(__MEND__)(?:&nbsp;|\s)*(__MSTART__)/gi, ' ')
     .replace(/__MSTART__([^_])/g, '@$1')
     .replace(/__MEND__/g, '')

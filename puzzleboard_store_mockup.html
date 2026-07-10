@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧩 PuzzleBoard — Patch's Shop</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0a0a10;
+  --surface: #13131c;
+  --surface2: #1a1a26;
+  --surface3: #222230;
+  --border: #252535;
+  --accent: #7c6cff;
+  --accent-glow: rgba(124,108,255,0.18);
+  --accent2: #ff6b9d;
+  --accent3: #43e8b0;
+  --warn: #ffb443;
+  --text: #e4e4f0;
+  --muted: #5a5a72;
+  --danger: #ff4d6d;
+  --shop-gold: #f5c842;
+  --shop-gold-glow: rgba(245,200,66,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% -10%, rgba(124,108,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 80% 110%, rgba(245,200,66,0.05) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── Header ── */
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,16,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { font-size: 22px; }
+.logo-text { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+.logo-text em { font-style: normal; color: var(--accent); }
+.view-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--shop-gold); color: #1a1400;
+  padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle;
+}
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+/* ── Balance chip ── */
+.balance-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(245,200,66,0.06));
+  border: 1px solid rgba(245,200,66,0.3);
+  border-radius: 30px; padding: 6px 14px 6px 10px;
+  cursor: default;
+}
+.balance-chip .bal-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.balance-chip .bal-amount { font-size: 18px; font-weight: 900; color: var(--shop-gold); font-family: 'DM Mono', monospace; line-height: 1; }
+.balance-chip .bal-unit { font-size: 11px; color: var(--muted); }
+
+.nav-btn {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--muted); font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+  padding: 6px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s;
+}
+.nav-btn:hover { color: var(--text); border-color: var(--accent); }
+
+/* ── Main layout ── */
+.page { max-width: 980px; margin: 0 auto; padding: 28px 24px 60px; position: relative; z-index: 1; }
+
+/* ── Shop hero ── */
+.shop-hero {
+  display: flex; align-items: center; gap: 20px;
+  background: linear-gradient(135deg, rgba(245,200,66,0.07) 0%, rgba(124,108,255,0.06) 100%);
+  border: 1px solid rgba(245,200,66,0.18);
+  border-radius: 16px; padding: 22px 28px; margin-bottom: 28px;
+}
+.shop-mascot { font-size: 52px; line-height: 1; flex-shrink: 0; }
+.shop-hero-text h1 { font-size: 22px; font-weight: 900; letter-spacing: -0.4px; margin-bottom: 4px; }
+.shop-hero-text h1 span { color: var(--shop-gold); }
+.shop-hero-text p { font-size: 13px; color: var(--muted); line-height: 1.5; max-width: 480px; }
+.shop-hero-stats {
+  margin-left: auto; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+}
+.hero-stat-val { font-size: 36px; font-weight: 900; font-family: 'DM Mono', monospace; color: var(--shop-gold); line-height: 1; }
+.hero-stat-lbl { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.hero-stat-sub { font-size: 10px; color: var(--muted); margin-top: 6px; }
+.hero-stat-sub span { color: var(--accent3); font-weight: 700; }
+
+/* ── Filter tabs ── */
+.filter-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.filter-pill {
+  font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+  padding: 6px 14px; border-radius: 20px; cursor: pointer;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--muted); transition: all 0.15s;
+}
+.filter-pill:hover { color: var(--text); border-color: var(--accent); }
+.filter-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.filter-pill.gold.active { background: var(--shop-gold); border-color: var(--shop-gold); color: #1a1400; }
+.filter-count { font-size: 10px; margin-left: 4px; opacity: 0.7; }
+
+/* ── Section header ── */
+.section-hdr {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.section-hdr h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.section-hdr .hdr-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ── Item grid ── */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+/* ── Item card ── */
+.item-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: all 0.2s; cursor: default;
+  position: relative; overflow: hidden;
+}
+.item-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% -20%, var(--card-glow, transparent), transparent 70%);
+  pointer-events: none;
+}
+.item-card:hover { border-color: var(--card-accent, var(--border)); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+
+.item-card.experience { --card-accent: #7c6cff; --card-glow: rgba(124,108,255,0.1); }
+.item-card.physical   { --card-accent: #43e8b0; --card-glow: rgba(67,232,176,0.08); }
+.item-card.vip        { --card-accent: #f5c842; --card-glow: rgba(245,200,66,0.1); }
+.item-card.out-of-stock { opacity: 0.55; }
+
+.item-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.item-emoji { font-size: 32px; line-height: 1; }
+.item-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+}
+.badge-experience { background: rgba(124,108,255,0.15); color: var(--accent); border: 1px solid rgba(124,108,255,0.25); }
+.badge-physical   { background: rgba(67,232,176,0.12); color: var(--accent3); border: 1px solid rgba(67,232,176,0.2); }
+.badge-vip        { background: rgba(245,200,66,0.12); color: var(--shop-gold); border: 1px solid rgba(245,200,66,0.25); }
+.badge-out        { background: rgba(90,90,114,0.2); color: var(--muted); border: 1px solid var(--border); }
+
+.item-name { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; }
+.item-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.item-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
+
+.item-cost {
+  display: flex; align-items: baseline; gap: 4px;
+}
+.cost-num { font-size: 22px; font-weight: 900; font-family: 'DM Mono', monospace; color: var(--shop-gold); line-height: 1; }
+.cost-unit { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+.item-inventory {
+  font-size: 10px; font-family: 'DM Mono', monospace;
+  color: var(--muted);
+}
+.item-inventory.low { color: var(--warn); font-weight: 700; }
+.item-inventory.out { color: var(--danger); font-weight: 700; }
+
+.redeem-btn {
+  font-size: 12px; font-weight: 700; font-family: 'Inter', sans-serif;
+  padding: 8px 16px; border-radius: 8px; cursor: pointer; border: none;
+  background: var(--accent); color: #fff; transition: all 0.15s;
+  white-space: nowrap;
+}
+.redeem-btn:hover { background: #6b5ce0; transform: scale(1.03); }
+.redeem-btn.cant-afford { background: var(--surface3); color: var(--muted); cursor: not-allowed; border: 1px solid var(--border); }
+.redeem-btn.out { background: var(--surface3); color: var(--muted); cursor: not-allowed; border: 1px solid var(--border); }
+
+/* ── Redemption history ── */
+.history-section { margin-top: 8px; }
+.history-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 12px;
+}
+.history-table th {
+  text-align: left; padding: 8px 12px;
+  color: var(--muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+.history-table td {
+  padding: 11px 12px; border-bottom: 1px solid rgba(37,37,53,0.6);
+  color: var(--text);
+}
+.history-table tr:last-child td { border-bottom: none; }
+.status-pill {
+  font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+  display: inline-block;
+}
+.status-pending   { background: rgba(255,180,67,0.15); color: var(--warn); border: 1px solid rgba(255,180,67,0.25); }
+.status-fulfilled { background: rgba(67,232,176,0.12); color: var(--accent3); border: 1px solid rgba(67,232,176,0.2); }
+.status-cancelled { background: rgba(255,77,109,0.12); color: var(--danger); border: 1px solid rgba(255,77,109,0.2); }
+
+/* ── Confirm modal overlay ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-card {
+  background: var(--surface2);
+  border: 1px solid rgba(245,200,66,0.25);
+  border-radius: 18px; padding: 32px 36px; width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,200,66,0.1);
+}
+.modal-emoji { font-size: 48px; margin-bottom: 12px; }
+.modal-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+.modal-sub { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 20px; }
+.modal-cost-preview {
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-cost-preview .mcp-label { font-size: 12px; color: var(--muted); }
+.modal-cost-preview .mcp-val { font-size: 16px; font-weight: 900; font-family: 'DM Mono', monospace; color: var(--shop-gold); }
+.modal-cost-preview .mcp-after { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.modal-cost-preview .mcp-after span { color: var(--accent3); }
+.modal-btns { display: flex; gap: 10px; }
+.modal-btns button { flex: 1; padding: 11px; border-radius: 9px; font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; border: none; transition: all 0.15s; }
+.btn-cancel { background: var(--surface3); color: var(--muted); }
+.btn-cancel:hover { color: var(--text); }
+.btn-confirm { background: var(--accent); color: #fff; }
+.btn-confirm:hover { background: #6b5ce0; }
+
+.empty-history {
+  text-align: center; padding: 28px; color: var(--muted); font-size: 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="app-header">
+  <div class="logo">
+    <div class="logo-icon">🧩</div>
+    <div>
+      <div class="logo-text">Puzzle<em>Board</em> <span class="view-badge">Shop</span></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="balance-chip">
+      <div>
+        <div class="bal-label">My Balance</div>
+        <div style="display:flex;align-items:baseline;gap:4px;">
+          <div class="bal-amount">47</div>
+          <div class="bal-unit">🧩 pieces</div>
+        </div>
+      </div>
+    </div>
+    <button class="nav-btn">← Leaderboard</button>
+  </div>
+</div>
+
+<!-- Page -->
+<div class="page">
+
+  <!-- Hero -->
+  <div class="shop-hero">
+    <div class="shop-mascot">🐾</div>
+    <div class="shop-hero-text">
+      <h1>Patch's <span>Puzzle Shop</span></h1>
+      <p>Trade your earned pieces for real rewards. Pieces you spend don't affect your leaderboard rank — your rank is always based on total pieces earned.</p>
+    </div>
+    <div class="shop-hero-stats">
+      <div class="hero-stat-val">47</div>
+      <div class="hero-stat-lbl">Pieces to spend</div>
+      <div class="hero-stat-sub">94 total earned · <span>47 spent</span></div>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="filter-row">
+    <button class="filter-pill active" onclick="filterCards('all', this)">All <span class="filter-count">8</span></button>
+    <button class="filter-pill" onclick="filterCards('experience', this)">✨ Experiences <span class="filter-count">4</span></button>
+    <button class="filter-pill" onclick="filterCards('physical', this)">🎁 Physical <span class="filter-count">2</span></button>
+    <button class="filter-pill" onclick="filterCards('vip', this)">⭐ VIP Access <span class="filter-count">2</span></button>
+  </div>
+
+  <!-- Experience items -->
+  <div class="section-hdr">
+    <h2>✨ Experiences</h2>
+    <div class="hdr-line"></div>
+  </div>
+  <div class="item-grid" id="item-grid">
+
+    <div class="item-card experience" data-cat="experience">
+      <div class="item-card-top">
+        <div class="item-emoji">🕔</div>
+        <div class="item-badge badge-experience">Experience</div>
+      </div>
+      <div>
+        <div class="item-name">Leave Early Pass</div>
+        <div class="item-desc">Dip out up to 2 hours early on any Friday this quarter. Coordinate with your manager.</div>
+      </div>
+      <div class="item-card-footer">
+        <div>
+          <div class="item-cost"><span class="cost-num">20</span><span class="cost-unit">🧩 pieces</span></div>
+          <div class="item-inventory">Unlimited</div>
+        </div>
+        <button class="redeem-btn" onclick="openConfirm('Leave Early Pass', 20, '🕔', 47)">Redeem</button>
+      </div>
+    </div>
+
+    <div class="item-card experience" data-cat="experience">
+      <div class="item-card-top">
+        <div class="item-emoji">🎤</div>
+        <div class="item-badge badge-experience">Experience</div>
+      </div>
+      <div>
+        <div class="item-name">Run an All-Hands Segment</div>
+        <div class="item-desc">Host a 10-minute segment at the next All-Hands — your topic, your format, your moment.</div>
+      </div>
+      <div class="item-card-footer">
+        <div>
+          <div class="item-cost"><span class="cost-num">30</span><span class="cost-unit">🧩 pieces</span></div>
+          <div class="item-inventory low">⚠ 2 left this quarter</div>
+        </div>
+        <button class="redeem-btn cant-afford">30 needed</button>
+      </div>
+    </div>
+
+    <div class="item-card experience" data-cat="experience">
+      <div class="item-card-top">
+        <div class="item-emoji">🍽️</div>
+        <div class="item-badge badge-experience">Experience</div>
+      </div>
+      <div>
+        <div class="item-name">Team Lunch Pick</div>
+        <div class="item-desc">Choose the restaurant for the next team lunch outing. Company covers up to $25/person.</div>
+      </div>
+      <div class="item-card-footer">
+        <div>
+          <div class="item-cost"><span class="cost-num">25</span><span class="cost-unit">🧩 pieces</span></div>
+          <div class="item-inventory low">⚠ 1 left this quarter</div>
+        </div>
+        <button class="redeem-btn" onclick="openConfirm('Team Lunch Pick', 25, '🍽️', 47)">Redeem</button>
+      </div>
+    </div>
+
+    <div class="item-card experience" data-cat="experience">
+      <div class="item-card-top">
+        <div class="item-emoji">🏖️</div>
+        <div class="item-badge badge-experience">Experience</div>
+      </div>
+      <div>
+        <div class="item-name">Work From Anywhere Day</div>
+        <div class="item-desc">One day to work from wherever you like — a café, the park, grandma's house. No questions asked.</div>
+      </div>
+      <div class="item-card-footer">
+        <div>
+          <div class="item-cost"><span class="cost-num">35</span><span class="cost-unit">🧩 pieces</span></div>
+          <div class="item-inventory">Unlimited</div>
+        </div>
+        <button class="redeem-btn" onclick="openConfirm('Work From Anywhere Day', 35, '🏖️', 47)">Redeem</button>
+      </div>
+    </div>
+
+    <!-- Physical items -->
+    <div class="item-card physical" data-cat="physical">
+      <div class="item-card-top">
+        <div class="item-emoji">🎁</div>
+        <div class="item-badge badge-physical">Physical</div>
+      </div>
+      <div>
+        <div class="item-name">$25 Amazon Gift Card</div>
+        <div class="item-desc">A digital Amazon gift card sent to your work email within 2 business days.</div>
+      </div>
+      <div class="item-card-footer">
+        <div>
+          <div class="item-cost"><span class="cost-num">50</span><span class="cost-unit">🧩 pieces</span></div>
+          <div class="item-inventory low">⚠ 3 left</div>
+        </div>
+        <button class="redeem-btn cant-afford">50 needed</button>
+      </div>
+    </div>
+
+    <div class="item-card physical out-of-stock" data-cat="physical">
+      <div class="item-card-top">
+        <div class="item-emoji">👕</div>
+        <div class="item-badge badge-out">Out of Stock</div>
+      </div>
+      <div>
+        <div class="item-name">Company Swag Drop</div>
+        <div class="item-desc">Your choice from the swag store — hoodie, water bottle, or hat.</div>
+      </div>
+      <div class="item-card-footer">
+        <div>
+          <div class="item-cost"><span class="cost-num">40</span><span class="cost-unit">🧩 pieces</span></div>
+          <div class="item-inventory out">✕ Out of stock</div>
+        </div>
+        <button class="redeem-btn out">Unavailable</button>
+      </div>
+    </div>
+
+    <!-- VIP items -->
+    <div class="item-card vip" data-cat="vip">
+      <div class="item-card-top">
+        <div class="item-emoji">☕</div>
+        <div class="item-badge badge-vip">VIP Access</div>
+      </div>
+      <div>
+        <div class="item-name">1-on-1 with Leadership</div>
+        <div class="item-desc">A 30-minute virtual coffee chat with the Director or VP of your choice. Ask anything.</div>
+      </div>
+      <div class="item-card-footer">
+        <div>
+          <div class="item-cost"><span class="cost-num">45</span><span class="cost-unit">🧩 pieces</span></div>
+          <div class="item-inventory low">⚠ 2 left this quarter</div>
+        </div>
+        <button class="redeem-btn" onclick="openConfirm('1-on-1 with Leadership', 45, '☕', 47)">Redeem</button>
+      </div>
+    </div>
+
+    <div class="item-card vip" data-cat="vip">
+      <div class="item-card-top">
+        <div class="item-emoji">🧭</div>
+        <div class="item-badge badge-vip">VIP Access</div>
+      </div>
+      <div>
+        <div class="item-name">Pick Next Quarter's Team Social</div>
+        <div class="item-desc">You pick the activity for the whole team's next social event. Escape room? Bowling? Your call.</div>
+      </div>
+      <div class="item-card-footer">
+        <div>
+          <div class="item-cost"><span class="cost-num">60</span><span class="cost-unit">🧩 pieces</span></div>
+          <div class="item-inventory low">⚠ 1 left</div>
+        </div>
+        <button class="redeem-btn cant-afford">60 needed</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Redemption history -->
+  <div class="history-section">
+    <div class="section-hdr">
+      <h2>📋 My Redemptions</h2>
+      <div class="hdr-line"></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Cost</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Leave Early Pass</strong></td>
+            <td style="font-family:'DM Mono',monospace;color:var(--shop-gold);">20 🧩</td>
+            <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;">2025-05-30</td>
+            <td><span class="status-pill status-fulfilled">Fulfilled</span></td>
+          </tr>
+          <tr>
+            <td><strong>Team Lunch Pick</strong></td>
+            <td style="font-family:'DM Mono',monospace;color:var(--shop-gold);">25 🧩</td>
+            <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;">2025-06-03</td>
+            <td><span class="status-pill status-pending">Pending</span></td>
+          </tr>
+          <tr>
+            <td><strong>Work From Anywhere Day</strong></td>
+            <td style="font-family:'DM Mono',monospace;color:var(--shop-gold);">35 🧩</td>
+            <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;">2025-06-08</td>
+            <td><span class="status-pill status-pending">Pending</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Confirm modal -->
+<div class="modal-overlay" id="confirm-modal" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-emoji" id="m-emoji">🕔</div>
+    <div class="modal-title" id="m-title">Leave Early Pass</div>
+    <div class="modal-sub">This will be sent to your admin for fulfillment. You'll see it in My Redemptions once submitted.</div>
+    <div class="modal-cost-preview">
+      <div>
+        <div class="mcp-label">Cost</div>
+        <div class="mcp-val" id="m-cost">20 🧩</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="mcp-label">Balance after</div>
+        <div class="mcp-after" id="m-after">47 → <span>27</span> pieces</div>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-confirm" onclick="confirmRedeem()">Redeem 🧩</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterCards(cat, btn) {
+    document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.item-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  function openConfirm(name, cost, emoji, balance) {
+    document.getElementById('m-emoji').textContent = emoji;
+    document.getElementById('m-title').textContent = name;
+    document.getElementById('m-cost').textContent = cost + ' 🧩';
+    const after = balance - cost;
+    document.getElementById('m-after').innerHTML = `${balance} → <span>${after}</span> pieces`;
+    document.getElementById('confirm-modal').style.display = 'flex';
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirm-modal').style.display = 'none';
+  }
+
+  function confirmRedeem() {
+    closeConfirm();
+    // In real app: would submit redemption and update balance
+    alert('✅ Redemption submitted! Check My Redemptions for status.');
+  }
+
+  document.getElementById('confirm-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeConfirm();
+  });
+</script>
+</body>
+</html>

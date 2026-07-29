@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuzzleBoard Leaderboard</title>
+<link rel="stylesheet" href="leaderboard-embed.css">
+</head>
+<body>
+
+<div class="lb-embed-wrap">
+
+  <!-- Header row: title + period/sort controls -->
+  <div class="lb-embed-header">
+    <div class="lb-embed-title">🧩 <span>Leaderboard</span> <span id="lb-period-display" class="lb-embed-period"></span></div>
+    <div class="lb-embed-controls">
+      <div class="pill-group" id="lb-period-group" style="position:relative;">
+        <button class="pill" id="ep-7d"  onclick="setEmbedPeriod('7d', this)">7D</button>
+        <button class="pill" id="ep-30d" onclick="setEmbedPeriod('30d', this)">30D</button>
+        <div class="period-popover-wrap">
+          <button class="pill active" id="ep-quarter" onclick="toggleQuarterPopover()">Quarter ▾</button>
+          <div class="period-popover" id="ep-quarter-popover">
+            <div class="year-nav">
+              <button class="year-nav-btn" onclick="shiftEmbedYear(-1)">‹</button>
+              <div class="year-label" id="ep-year-label"></div>
+              <button class="year-nav-btn" onclick="shiftEmbedYear(1)">›</button>
+            </div>
+            <div class="popover-grid" id="ep-quarter-grid"></div>
+          </div>
+        </div>
+        <button class="pill" id="ep-all" onclick="setEmbedPeriod('all', this)">ALL</button>
+      </div>
+      <div class="pill-group" id="lb-sort-group">
+        <button class="pill active" data-sort="received" onclick="setEmbedSort('received', this)">Received</button>
+        <button class="pill"        data-sort="sent"     onclick="setEmbedSort('sent', this)">Sent</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="lb-embed-search-wrap">
+    <input type="text" id="lb-embed-search" placeholder="🔍 Search participants…" oninput="renderEmbedLeaderboard()">
+  </div>
+
+  <!-- Leaderboard body -->
+  <div class="lb-embed-grid" id="lb-embed-grid">
+    <div class="lb-embed-empty">
+      <div class="lb-embed-empty-icon">🧩</div>
+      <div>Loading leaderboard…</div>
+    </div>
+  </div>
+
+  <div class="lb-embed-footer">
+    <span id="lb-embed-updated"></span>
+  </div>
+
+</div>
+
+<script src="leaderboard-embed.js"></script>
+</body>
+</html>
